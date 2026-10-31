@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>Panel · Kaltech</title>
+  <link rel="icon" href="../assets/img/logo.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<!-- LOGIN -->
+<section id="loginView" class="login-wrap">
+  <form id="loginForm" class="login-card">
+    <img src="../assets/img/logo.png" alt="" width="84" height="84" onerror="this.style.display='none'">
+    <h1>Panel Kaltech</h1>
+    <p id="cfgWarn" class="warn" hidden>Falta configurar Supabase en <code>js/config.js</code>.</p>
+    <label>Correo<input type="email" id="loginEmail" required autocomplete="username"></label>
+    <label>Contraseña<input type="password" id="loginPass" required autocomplete="current-password"></label>
+    <button class="btn btn-primary" type="submit">Entrar</button>
+    <p id="loginErr" class="err" hidden></p>
+    <a href="../index.html" class="back">← Volver a la tienda</a>
+  </form>
+</section>
+
+<!-- APP -->
+<section id="appView" hidden>
+  <header class="topbar">
+    <strong>Kal<b>tech</b> · Admin</strong>
+    <nav class="tabs" id="tabs">
+      <button data-tab="products" class="active">Productos</button>
+      <button data-tab="categories">Categorías</button>
+      <button data-tab="settings">Ajustes</button>
+    </nav>
+    <button class="btn btn-ghost btn-sm" id="logoutBtn"><svg class="ic"><use href="#i-log-out"/></svg> Salir</button>
+  </header>
+
+  <main class="panel">
+    <!-- Productos -->
+    <div id="tab-products" class="tab">
+      <div class="bar">
+        <h2>Productos</h2>
+        <select id="fType"><option value="">Todos los tipos</option><option value="celular">Celulares (segunda mano, bajo pedido)</option><option value="estuche">Accesorios (en tienda)</option></select>
+        <input type="search" id="fSearch" placeholder="Buscar…">
+        <button class="btn btn-primary btn-sm" id="newProduct"><svg class="ic"><use href="#i-plus"/></svg> Nuevo producto</button>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th></th><th>Nombre</th><th>Tipo</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Visible</th><th></th></tr></thead>
+        <tbody id="productRows"></tbody>
+      </table></div>
+    </div>
+
+    <!-- Categorías -->
+    <div id="tab-categories" class="tab" hidden>
+      <div class="bar">
+        <h2>Categorías</h2>
+        <button class="btn btn-primary btn-sm" id="newCategory"><svg class="ic"><use href="#i-plus"/></svg> Nueva categoría</button>
+      </div>
+      <div class="quick" id="quickCats">
+        <p><strong>Categorías de accesorios:</strong> así los clientes encuentran los productos más rápido. Toca para agregar una sugerida o crea la tuya con "Nueva categoría". Solo se muestran en la tienda las que tengan productos.</p>
+        <div class="quick-btns" id="quickBtns">
+          <button type="button" class="btn btn-ghost btn-sm" data-quick="Estuches"><svg class="ic"><use href="#i-plus"/></svg> Estuches</button>
+          <button type="button" class="btn btn-ghost btn-sm" data-quick="Cargadores"><svg class="ic"><use href="#i-plus"/></svg> Cargadores</button>
+          <button type="button" class="btn btn-ghost btn-sm" data-quick="Audífonos"><svg class="ic"><use href="#i-plus"/></svg> Audífonos</button>
+          <button type="button" class="btn btn-ghost btn-sm" data-quick="Cables"><svg class="ic"><use href="#i-plus"/></svg> Cables</button>
+        </div>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Nombre</th><th>Tipo</th><th>Productos</th><th></th></tr></thead>
+        <tbody id="categoryRows"></tbody>
+      </table></div>
+    </div>
+
+    <!-- Ajustes -->
+    <div id="tab-settings" class="tab" hidden>
+      <div class="bar"><h2>Ajustes del sitio</h2></div>
+      <form id="settingsForm" class="form-card">
+        <label>WhatsApp (con código de país, sin + ni espacios)
+          <input id="sWhatsapp" placeholder="573001234567"></label>
+        <label>Instagram (enlace completo)
+          <input id="sInstagram" type="url" placeholder="https://www.instagram.com/tu_usuario"></label>
+        <label>Facebook (enlace completo)
+          <input id="sFacebook" type="url" placeholder="https://www.facebook.com/tu_pagina"></label>
+        <label>TikTok (enlace completo)
+          <input id="sTiktok" type="url" placeholder="https://www.tiktok.com/@tu_usuario"></label>
+        <p class="hint">Los botones de redes aparecen arriba en la página solo si dejas el enlace. Si borras uno, ese botón desaparece.</p>
+        <label>Texto de la sección Reparaciones
+          <textarea id="sRepair" rows="3" placeholder="Reparamos tu celular con garantía…"></textarea></label>
+        <button class="btn btn-primary" type="submit">Guardar ajustes</button>
+      </form>
+    </div>
+  </main>
+</section>
+
+<!-- Modal producto -->
+<dialog id="productDialog">
+  <form id="productForm" class="form-card">
+    <h3 id="pTitle">Nuevo producto</h3>
+    <div class="row2">
+      <label>Tipo
+        <select id="pType" required>
+          <option value="celular">Celular (segunda mano, bajo pedido)</option>
+          <option value="estuche">Accesorio (estuche, cargador, etc. · en tienda)</option>
+        </select></label>
+      <label>Categoría <select id="pCat"></select></label>
+    </div>
+    <label>Nombre <input id="pName" required maxlength="120"></label>
+    <div class="row2">
+      <label>Marca <input id="pBrand" maxlength="60"></label>
+      <label>Precio (COP) <input id="pPrice" type="number" min="0" step="1000"></label>
+    </div>
+    <label id="stockWrap">Stock disponible (accesorios) <input id="pStock" type="number" min="0" value="0"></label>
+    <label>Descripción <textarea id="pDesc" rows="2"></textarea></label>
+    <label>Especificaciones (una por línea) <textarea id="pSpecs" rows="3"></textarea></label>
+    <label>Imagen (se comprime automáticamente)
+      <input id="pFile" type="file" accept="image/*"></label>
+    <div class="preview"><img id="pPreview" alt="" hidden><small id="pInfo"></small></div>
+    <div class="checks">
+      <label class="chk"><input type="checkbox" id="pActive" checked> Visible en la tienda</label>
+      <label class="chk"><input type="checkbox" id="pFeatured"> Destacado</label>
+    </div>
+    <div class="actions">
+      <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+      <button type="submit" class="btn btn-primary" id="pSave">Guardar</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Modal categoría -->
+<dialog id="categoryDialog">
+  <form id="categoryForm" class="form-card">
+    <h3 id="cTitle">Nueva categoría</h3>
+    <label>Nombre <input id="cName" required maxlength="60"></label>
+    <label>Tipo
+      <select id="cType"><option value="celular">Celulares</option><option value="estuche">Accesorios</option></select></label>
+    <div class="actions">
+      <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
+      <button type="submit" class="btn btn-primary">Guardar</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/utils.js"></script>
+<script src="../js/icons.js"></script>
+<script src="js/image-compressor.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

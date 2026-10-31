@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kaltech | Accesorios y reparación de celulares</title>
+  <meta name="description" content="Kaltech: accesorios para celular en tienda y servicio técnico especializado en reparación de celulares.">
+  <meta name="theme-color" content="#050716">
+  <link rel="icon" href="assets/img/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="assets/img/hero-bg.webp">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="#inicio" class="brand" aria-label="Kaltech">
+      <img id="brandLogo" src="assets/img/logo.png" alt="Kaltech" width="56" height="56" onerror="this.style.display='none'">
+      <span class="brand-text">
+        <span class="brand-name">Kal<b>tech</b></span>
+        <small id="brandSub">Accesorios · Celulares · Reparaciones</small>
+      </span>
+    </a>
+    <nav id="mainNav" class="main-nav" aria-label="Principal">
+      <a href="#inicio" data-spy="inicio"><svg class="ic"><use href="#i-home"/></svg>Inicio</a>
+      <div class="socials" id="socials" aria-label="Redes sociales">
+        <a class="social-btn so-ig" id="soIg" href="#" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><svg class="ic"><use href="#i-instagram"/></svg></a>
+        <a class="social-btn so-fb" id="soFb" href="#" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook"><svg class="ic"><use href="#i-facebook"/></svg></a>
+        <a class="social-btn so-tt" id="soTt" href="#" target="_blank" rel="noopener" aria-label="TikTok" title="TikTok"><svg class="ic"><use href="#i-tiktok"/></svg></a>
+      </div>
+      <a class="btn btn-wa nav-cta" id="navWa" href="#" target="_blank" rel="noopener">
+        <svg class="ic"><use href="#i-whatsapp"/></svg> WhatsApp <svg class="ic chev"><use href="#i-chevron-right"/></svg>
+      </a>
+    </nav>
+    <div class="header-actions">
+      <button class="icon-btn cart-btn" id="cartBtn" data-feature="cases" aria-label="Abrir carrito" title="Carrito">
+        <svg class="ic"><use href="#i-cart"/></svg>
+        <span class="cart-count" id="cartCount" hidden>0</span>
+      </button>
+      <button class="icon-btn nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+        <svg class="ic"><use href="#i-menu"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section id="inicio" class="hero">
+    <div class="container hero-inner">
+      <div class="hero-text">
+        <h1>Todo para tu celular, con el respaldo de un <span class="grad">servicio técnico real</span></h1>
+        <p class="lead" id="heroLead">Audífonos, cargadores, estuches, protectores de pantalla, cables y mucho más para tu celular. Encuentra todo en un solo lugar.</p>
+        <ul class="trust">
+          <li><span class="trust-ic"><svg class="ic"><use href="#i-shield-check"/></svg></span><span>Productos<br>de calidad</span></li>
+          <li><span class="trust-ic"><svg class="ic"><use href="#i-award"/></svg></span><span>Garantía<br>en reparaciones</span></li>
+          <li><span class="trust-ic"><svg class="ic"><use href="#i-clock"/></svg></span><span>Atención<br>rápida y segura</span></li>
+        </ul>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true"></div>
+
+      <ul class="feature-list">
+        <li><a class="feature f-purple" href="#accesorios" data-feature="cases">
+          <span class="icon-tile"><svg class="ic"><use href="#i-shield-check"/></svg></span>
+          <div><strong>Accesorios</strong><small>Disponibles en tienda</small></div>
+          <span class="go"><svg class="ic"><use href="#i-chevron-right"/></svg></span></a></li>
+        <li data-feature="phones"><a class="feature f-blue" href="#celulares">
+          <span class="icon-tile"><svg class="ic"><use href="#i-smartphone"/></svg></span>
+          <div><strong>Celulares</strong><small>Segunda mano</small></div>
+          <span class="go"><svg class="ic"><use href="#i-chevron-right"/></svg></span></a></li>
+        <li><a class="feature f-cyan" href="#reparaciones">
+          <span class="icon-tile"><svg class="ic"><use href="#i-phone-service"/></svg></span>
+          <div><strong>Reparación</strong><small>Todas las marcas</small></div>
+          <span class="go"><svg class="ic"><use href="#i-chevron-right"/></svg></span></a></li>
+      </ul>
+    </div>
+
+    <div class="hero-strip">
+      <div class="container strip-inner">
+        <span class="strip-r">Tecnología <i>·</i> Calidad <i>·</i> Confianza</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACCESORIOS -->
+  <section id="accesorios" class="section" data-feature="cases">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow-sm">En tienda</span>
+        <h2>Accesorios</h2>
+      </div>
+      <div class="cat-tiles" id="chipsCases" aria-label="Categorías de accesorios"></div>
+      <div class="toolbar">
+        <label class="search"><svg class="ic"><use href="#i-search"/></svg>
+          <input type="search" id="searchCases" placeholder="Buscar accesorio o modelo" aria-label="Buscar accesorios"></label>
+      </div>
+      <div class="grid" id="gridCases"></div>
+    </div>
+  </section>
+
+  <!-- CELULARES (lista, sin imágenes) -->
+  <section id="celulares" class="section section-alt" data-feature="phones">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow-sm">Bajo pedido</span>
+        <h2>Celulares de segunda mano</h2>
+        <p class="notice"><svg class="ic"><use href="#i-truck"/></svg><span><strong>Todos los celulares son de segunda mano y se entregan bajo pedido.</strong> Elige un modelo de la lista, escríbenos y confirmamos precio y tiempo de entrega.</span></p>
+      </div>
+      <div class="toolbar">
+        <label class="search"><svg class="ic"><use href="#i-search"/></svg>
+          <input type="search" id="searchPhones" placeholder="Buscar por modelo o marca" aria-label="Buscar celulares"></label>
+        <div class="chips" id="chipsPhones"></div>
+      </div>
+      <div class="phone-list" id="gridPhones"></div>
+
+      <ol class="steps">
+        <li><span class="step-n">1</span><div><strong>Elige tu modelo</strong><small>Mira la lista o pídenos el que buscas.</small></div></li>
+        <li><span class="step-n">2</span><div><strong>Confirmamos el pedido</strong><small>Precio final y tiempo estimado por WhatsApp.</small></div></li>
+        <li><span class="step-n">3</span><div><strong>Recibe tu equipo</strong><small>Revisado y listo para usar.</small></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- REPARACIONES (lista) -->
+  <section id="reparaciones" class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow-sm">Servicio técnico</span>
+        <h2>Reparación de celulares</h2>
+        <p id="repairText">Además de vender, reparamos tu equipo. Diagnóstico claro, repuestos de calidad y garantía sobre el trabajo realizado.</p>
+      </div>
+      <ul class="repair-list">
+        <li class="repair-row"><span class="icon-tile"><svg class="ic"><use href="#i-smartphone"/></svg></span><div><h3>Cambio de pantalla</h3><p>Pantallas rotas, táctil sin respuesta o líneas en el display.</p></div></li>
+        <li class="repair-row"><span class="icon-tile"><svg class="ic"><use href="#i-battery"/></svg></span><div><h3>Batería</h3><p>Descarga rápida, apagados repentinos o equipos que no cargan al 100%.</p></div></li>
+        <li class="repair-row"><span class="icon-tile"><svg class="ic"><use href="#i-zap"/></svg></span><div><h3>Puerto de carga</h3><p>Limpieza y reemplazo del puerto cuando el cable no hace contacto.</p></div></li>
+        <li class="repair-row"><span class="icon-tile"><svg class="ic"><use href="#i-droplets"/></svg></span><div><h3>Daños por líquido</h3><p>Revisión y limpieza interna de equipos mojados.</p></div></li>
+        <li class="repair-row"><span class="icon-tile"><svg class="ic"><use href="#i-cpu"/></svg></span><div><h3>Software</h3><p>Actualizaciones, formateo y solución de fallas del sistema.</p></div></li>
+        <li class="repair-row"><span class="icon-tile"><svg class="ic"><use href="#i-search"/></svg></span><div><h3>Diagnóstico</h3><p>Revisamos tu equipo y te explicamos qué tiene y cuánto cuesta.</p></div></li>
+      </ul>
+      <div class="center">
+        <a class="btn btn-wa" id="repairWa" href="#" target="_blank" rel="noopener"><svg class="ic"><use href="#i-whatsapp"/></svg> Consultar mi reparación</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span>© <span id="year"></span> Kaltech · Reparación y Tecnología</span>
+    <nav aria-label="Pie de página">
+      <a href="#accesorios" data-feature="cases">Accesorios</a>
+      <a href="#celulares" data-feature="phones">Celulares</a>
+      <a href="#reparaciones">Reparaciones</a>
+    </nav>
+  </div>
+</footer>
+
+<a class="wa-float" id="waFloat" href="#" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+  <svg class="ic"><use href="#i-whatsapp"/></svg>
+</a>
+
+<!-- Detalle de producto (accesorios) -->
+<dialog id="productModal" class="modal"></dialog>
+
+<!-- Carrito (accesorios) -->
+<dialog id="cartDrawer" class="drawer" aria-label="Carrito"></dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/supabase.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/demo-data.js"></script>
+<script src="js/catalog.js"></script>
+</body>
+</html>
