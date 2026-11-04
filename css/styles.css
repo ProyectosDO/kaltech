@@ -267,10 +267,7 @@ h1,h2,h3{font-family:var(--font-h);letter-spacing:-.02em;line-height:1.12}
   .socials{justify-content:center;padding:18px 0 4px}
   .social-btn{width:48px;height:48px}
 
-  .hero-inner{
-  padding:20px 0 10px;
-  gap:10px;
-   }
+  .hero-inner{padding:36px 0 32px}
   .eyebrow{font-size:.8rem;padding:7px 14px;margin-bottom:20px}
   .lead{font-size:1rem}
   .trust{gap:12px 0;margin-bottom:26px}
