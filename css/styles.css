@@ -432,22 +432,3 @@ h1,h2,h3{font-family:var(--font-h);letter-spacing:-.02em;line-height:1.12}
   .hero::before{bottom:190px;height:520px}
   .hero-visual{height:300px}
 }
-.hero-location {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin-top: 22px;
-  color: #c5b9e8;
-  font-size: 16px;
-  letter-spacing: 0.3px;
-}
-
-.hero-location .location-icon {
-  font-size: 20px;
-  filter: drop-shadow(0 0 6px #9b4dff);
-}
-
-.hero-location strong {
-  color: #b77aff;
-  font-weight: 700;
-}
