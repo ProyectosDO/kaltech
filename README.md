@@ -89,3 +89,7 @@ El sitio usa únicamente el **tema oscuro** (azul noche con acentos morados).
 - Productos tipo **celular** → fila en una **lista sin imágenes** (marca, modelo, especificaciones, precio), marcados como "Segunda mano" y "Bajo pedido", con botón "Pedir" por WhatsApp. Van debajo de los accesorios.
 - Productos tipo **accesorio** → tarjetas con imagen y etiqueta "En stock / Agotado" según el stock.
 - Sección **Reparaciones** como lista de servicios y botón directo a WhatsApp.
+
+## Si el celular no muestra los cambios
+
+Los navegadores del celular guardan en memoria los archivos de la página. Los archivos de `index.html` llevan `?v=…` al final para obligar a descargar la versión nueva cuando cambian; en cada entrega nueva ese número cambia. Si aun así un celular se queda con la versión vieja: abre la página, recarga (menú ⋮ → recargar) o ábrela en una pestaña de incógnito. GitHub Pages puede tardar unos 10 minutos en servir lo recién publicado.
