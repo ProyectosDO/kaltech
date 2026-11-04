@@ -436,7 +436,7 @@ h1,h2,h3{font-family:var(--font-h);letter-spacing:-.02em;line-height:1.12}
   display: flex;
   align-items: center;
   gap: 9px;
-  margin-top: 12px;
+  margin-top: 22px;
   color: #c5b9e8;
   font-size: 16px;
   letter-spacing: 0.3px;
