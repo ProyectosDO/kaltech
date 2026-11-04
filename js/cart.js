@@ -88,7 +88,7 @@ KT.cart = (function () {
     var p = prod(id); if (!p) return;
     var cur = items[id] || 0, max = maxQty(p);
     if (max < 1) return KT.toast('Este accesorio está agotado', 'error');
-    if (cur >= max) return KT.toast('Solo hay ' + max + ' disponible' + (max === 1 ? '' : 's'), 'error');
+    if (cur >= max) return KT.toast('Para pedir más unidades escríbenos por WhatsApp', 'error');
     items[id] = cur + 1; save(); render();
     if (!silent) KT.toast('Agregado al carrito');
     var b = $('cartBtn'); if (b) { b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump'); }

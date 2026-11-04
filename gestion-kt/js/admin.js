@@ -111,8 +111,9 @@
   }
 
   async function uploadImage(blob, productId) {
-    var path = productId + '/' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.webp';
-    var up = await db.storage.from(KT_CONFIG.BUCKET).upload(path, blob, { contentType: 'image/webp', cacheControl: '31536000', upsert: false });
+    var ext = blob.type === 'image/jpeg' ? 'jpg' : 'webp';
+    var path = productId + '/' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.' + ext;
+    var up = await db.storage.from(KT_CONFIG.BUCKET).upload(path, blob, { contentType: blob.type || 'image/webp', cacheControl: '31536000', upsert: false });
     if (up.error) throw up.error;
     return db.storage.from(KT_CONFIG.BUCKET).getPublicUrl(path).data.publicUrl;
   }
@@ -209,7 +210,7 @@
         state.newImage = r; state.removeImage = false;
         $('pPreview').src = URL.createObjectURL(r.blob); $('pPreview').hidden = false;
         $('pRemoveImg').hidden = false;
-        $('pInfo').textContent = kb(r.originalSize) + ' → ' + kb(r.size) + ' (' + r.width + '×' + r.height + ', WebP)';
+        $('pInfo').textContent = kb(r.originalSize) + ' → ' + kb(r.size) + ' (' + r.width + '×' + r.height + ', ' + (r.type === 'image/jpeg' ? 'JPG' : 'WebP') + ')';
       } catch (err) { $('pInfo').textContent = ''; KT.toast(err.message, 'error'); e.target.value = ''; }
     });
     $('pRemoveImg').addEventListener('click', function () {

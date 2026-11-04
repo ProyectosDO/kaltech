@@ -66,7 +66,7 @@ select p.id,
        p.category_id,
        p.brand,
        p.price_cop               as price,
-       greatest(p.stock_qty, 0)  as stock,
+       case when p.stock_qty > 0 then 10 else 0 end as stock,   -- NO se publica la cantidad real: 0 = agotado, 10 = hay (tope por pedido)
        w.description,
        null::text                as specs,
        w.image_url,

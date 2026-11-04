@@ -31,12 +31,13 @@ La página **no tiene base de datos propia**: lee el inventario del sistema de v
 
 - El POS maneja productos, precios y existencias. Al vender o registrar una compra, la tienda se actualiza sola (**En stock / Agotado**).
 - La página solo lee dos **vistas públicas** (`public_products`, `public_categories`) y los ajustes (`web_settings`). Ahí no hay costos, ventas, clientes ni proveedores.
+- La tienda **no muestra cuántas unidades hay**: solo "En stock" o "Agotado". La cantidad real tampoco sale de la base de datos (la vista entrega 0 o 10). En el carrito el tope es 10 por producto; para más, el cliente escribe por WhatsApp.
 - Un producto nuevo del POS **no se publica solo**: aparece en el panel (`gestion-kt`) y tú decides cuándo mostrarlo, con foto y descripción.
 - Las categorías son las del POS (Estuches, Cargadores, Audífonos, Cables…). Solo se muestran las que tengan productos publicados. Los repuestos de servicio técnico nunca se publican.
 
 ## Puesta en marcha
 
-1. **Base de datos:** en el Supabase del POS corre las migraciones del POS en orden (la última, `0009_catalogo_web.sql`, es la de la página; también está aquí como `supabase/catalogo-web.sql`).
+1. **Base de datos:** en el Supabase del POS corre las migraciones del POS en orden (las últimas, `0009_catalogo_web.sql` y `0010_catalogo_sin_cantidad.sql`, son las de la página; también están aquí como `supabase/catalogo-web.sql` y `supabase/sin-cantidad.sql`).
 2. **Claves:** Project Settings → API → copia *Project URL* y *anon public key* **del proyecto del POS** en `js/config.js`. Cambia también `WHATSAPP_DEFAULT`. La anon key es pública por diseño; la seguridad está en las políticas RLS.
 3. **Logo:** guarda tu logo como `assets/img/logo.png`.
 4. **Usuarios:** el panel usa los mismos usuarios del POS (Authentication → Users). Para publicar productos el usuario necesita el permiso *Crear/editar/desactivar productos* (la administradora lo tiene).
@@ -53,7 +54,7 @@ La página **no tiene base de datos propia**: lee el inventario del sistema de v
 
 ## Imágenes
 
-Al elegir una foto, el navegador la **redimensiona (máx. 1200 px), la convierte a WebP y ajusta la calidad** hasta pesar ~200 KB antes de subirla a Supabase Storage. Al reemplazar o borrar un producto, la imagen anterior se elimina del bucket.
+Al elegir una foto, el navegador la **redimensiona (máx. 900 px), la convierte a WebP y ajusta la calidad** hasta pesar unos 80 KB antes de subirla a Supabase Storage. Al reemplazar o borrar un producto, la imagen anterior se elimina del bucket.
 
 ## Accesorios (activos)
 

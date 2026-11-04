@@ -155,7 +155,7 @@
     var msg = 'Hola Kaltech, me interesa el accesorio: ' + p.name;
     var img = p.image_url ? '<img src="' + KT.esc(p.image_url) + '" alt="' + KT.esc(p.name) + '">' : KT.icon('image');
     var note = '<p class="notice ok">' + KT.icon('check-circle') + '<span>' +
-      (p.stock > 0 ? 'En stock · quedan ' + KT.esc(p.stock) + (Number(p.stock) === 1 ? ' unidad' : ' unidades') : 'Actualmente agotado') + '.</span></p>';
+      (p.stock > 0 ? 'Disponible' : 'Actualmente agotado') + '.</span></p>';
     var specs = (p.specs || '').split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
     var specsHTML = specs.length
       ? '<ul class="specs">' + specs.map(function (l) { return '<li>' + KT.icon('check-circle') + KT.esc(l) + '</li>'; }).join('') + '</ul>'
