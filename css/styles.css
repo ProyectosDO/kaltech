@@ -237,7 +237,7 @@ h1,h2,h3{font-family:var(--font-h);letter-spacing:-.02em;line-height:1.12}
 @media(max-width:1000px){
   .grid{grid-template-columns:repeat(3,1fr)}
   .hero{background:var(--bg)}
-  .hero::before{content:'';position:absolute;left:0;right:0;bottom:100px;height:460px;background:url('../assets/img/hero-bg.webp') 88% 50%/auto 100% no-repeat;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 30%,#000 80%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 30%,#000 80%,transparent 100%);pointer-events:none}
+  .hero::before{content:'';position:absolute;left:0;right:0;bottom:40px;height:460px;background:url('../assets/img/hero-bg.webp') 88% 50%/auto 100% no-repeat;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 30%,#000 80%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 30%,#000 80%,transparent 100%);pointer-events:none}
   .hero-inner{position:relative;z-index:1}
   .hero-inner{gap:28px;padding:48px 0 40px}
   .hero-text{max-width:none}
@@ -267,7 +267,10 @@ h1,h2,h3{font-family:var(--font-h);letter-spacing:-.02em;line-height:1.12}
   .socials{justify-content:center;padding:18px 0 4px}
   .social-btn{width:48px;height:48px}
 
-  .hero-inner{padding:36px 0 32px}
+  .hero-inner{
+  padding:20px 0 10px;
+  gap:10px;
+   }
   .eyebrow{font-size:.8rem;padding:7px 14px;margin-bottom:20px}
   .lead{font-size:1rem}
   .trust{gap:12px 0;margin-bottom:26px}
@@ -436,7 +439,7 @@ h1,h2,h3{font-family:var(--font-h);letter-spacing:-.02em;line-height:1.12}
   display: flex;
   align-items: center;
   gap: 9px;
-  margin-top: 22px;
+  margin-top: 12px;
   color: #c5b9e8;
   font-size: 16px;
   letter-spacing: 0.3px;
