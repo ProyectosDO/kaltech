@@ -237,7 +237,7 @@ h1,h2,h3{font-family:var(--font-h);letter-spacing:-.02em;line-height:1.12}
 @media(max-width:1000px){
   .grid{grid-template-columns:repeat(3,1fr)}
   .hero{background:var(--bg)}
-  .hero::before{content:'';position:absolute;left:0;right:0;bottom:40px;height:460px;background:url('../assets/img/hero-bg.webp') 88% 50%/auto 100% no-repeat;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 30%,#000 80%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 30%,#000 80%,transparent 100%);pointer-events:none}
+  .hero::before{content:'';position:absolute;left:0;right:0;bottom:10px;height:460px;background:url('../assets/img/hero-bg.webp') 88% 50%/auto 100% no-repeat;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 30%,#000 80%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 30%,#000 80%,transparent 100%);pointer-events:none}
   .hero-inner{position:relative;z-index:1}
   .hero-inner{gap:28px;padding:48px 0 40px}
   .hero-text{max-width:none}
