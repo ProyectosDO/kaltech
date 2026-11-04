@@ -1,18 +1,17 @@
-/* Panel de administración Kaltech: login, CRUD de productos/categorías, ajustes */
+/*
+ * Panel de la página Kaltech.
+ * Los productos, precios y existencias vienen del POS (mismo Supabase). Aquí solo se decide
+ * qué se publica en la tienda y se le pone foto, descripción y "destacado".
+ * Entras con el mismo correo y contraseña que usas en el POS (necesita permiso para gestionar productos).
+ */
 (function () {
   var $ = function (id) { return document.getElementById(id); };
   var db = null;
-  var state = { cats: [], products: [], editing: null, editingCat: null, newImage: null, removeImage: false };
+  var state = { cats: [], products: [], editing: null, newImage: null, removeImage: false };
 
   /* ---------- Inicio / Auth ---------- */
   function init() {
-    // Si SHOW_CASES es false, se quitan los accesorios de los selectores (js/config.js)
-    if (!KT_CONFIG.SHOW_CASES) {
-      document.querySelectorAll('#fType option[value="estuche"], #pType option[value="estuche"], #cType option[value="estuche"]')
-        .forEach(function (o) { o.remove(); });
-    }
-    if (!KT_CONFIG.SHOW_CASES) $('quickCats').hidden = true;
-    var ok =KT_CONFIG.SUPABASE_URL && KT_CONFIG.SUPABASE_ANON_KEY && window.supabase;
+    var ok = KT_CONFIG.SUPABASE_URL && KT_CONFIG.SUPABASE_ANON_KEY && window.supabase;
     if (!ok) { $('cfgWarn').hidden = false; bindStatic(); return; }
     db = window.supabase.createClient(KT_CONFIG.SUPABASE_URL, KT_CONFIG.SUPABASE_ANON_KEY);
     bindStatic();
@@ -20,41 +19,46 @@
     db.auth.onAuthStateChange(function (_e, session) { session ? showApp() : showLogin(); });
   }
 
-  function showLogin() { $('appView').hidden = true; $('loginView').hidden = false; }
+  function showLogin() { loaded = false; $('appView').hidden = true; $('loginView').hidden = false; }
   var loaded = false;
   function showApp() {
     $('loginView').hidden = true; $('appView').hidden = false;
     if (!loaded) { loaded = true; loadAll(); }
   }
 
+  function webOf(p) {
+    var w = p && p.product_web;
+    if (Array.isArray(w)) w = w[0];
+    return w || null;
+  }
+
   async function loadAll() {
     try {
       var r = await Promise.all([
-        db.from('categories').select('*').order('name'),
-        db.from('products').select('*').order('created_at', { ascending: false }),
-        db.from('settings').select('*')
+        db.from('categories').select('id,name').order('name'),
+        db.from('products')
+          .select('id,code,name,brand,category_id,price_cop,stock_qty,active,is_part,product_web(visible,featured,image_url,description)')
+          .eq('active', true).eq('is_part', false).order('name'),
+        db.from('web_settings').select('*')
       ]);
       if (r[0].error) throw r[0].error;
       if (r[1].error) throw r[1].error;
-      state.cats = r[0].data; state.products = r[1].data;
+      state.cats = r[0].data;
+      state.products = r[1].data;
       var s = {}; (r[2].data || []).forEach(function (x) { s[x.key] = x.value; });
       $('sWhatsapp').value = s.whatsapp || '';
       $('sInstagram').value = s.instagram || '';
       $('sFacebook').value = s.facebook || '';
       $('sTiktok').value = s.tiktok || '';
       $('sRepair').value = s.repair_text || '';
-      renderProducts(); renderCategories();
-    } catch (e) { KT.toast('Error cargando datos: ' + e.message, 'error'); }
+      renderProducts();
+    } catch (e) {
+      KT.toast('No se pudieron cargar los productos: ' + e.message + '. ¿Tu usuario tiene permiso en el POS?', 'error');
+    }
   }
 
   /* ---------- Helpers ---------- */
   function catName(id) { var c = state.cats.find(function (x) { return x.id === id; }); return c ? c.name : '—'; }
-  function fillCatSelect(type, selected) {
-    var list = state.cats.filter(function (c) { return c.type === type; });
-    $('pCat').innerHTML = '<option value="">Sin categoría</option>' + list.map(function (c) {
-      return '<option value="' + KT.esc(c.id) + '"' + (c.id === selected ? ' selected' : '') + '>' + KT.esc(c.name) + '</option>';
-    }).join('');
-  }
   function storagePath(url) {
     if (!url) return null;
     var marker = '/object/public/' + KT_CONFIG.BUCKET + '/';
@@ -65,47 +69,49 @@
 
   /* ---------- Productos ---------- */
   function renderProducts() {
-    var t = $('fType').value, q = $('fSearch').value.trim().toLowerCase();
+    var v = $('fView').value, q = $('fSearch').value.trim().toLowerCase();
     var list = state.products.filter(function (p) {
-      return (!t || p.type === t) && (!q || (p.name + ' ' + (p.brand || '')).toLowerCase().indexOf(q) !== -1);
+      var w = webOf(p);
+      if (v === 'web' && !(w && w.visible)) return false;
+      if (v === 'hidden' && w && w.visible) return false;
+      if (v === 'nophoto' && w && w.image_url) return false;
+      return !q || (p.name + ' ' + (p.brand || '') + ' ' + p.code).toLowerCase().indexOf(q) !== -1;
     });
     $('productRows').innerHTML = list.length ? list.map(function (p) {
+      var w = webOf(p) || {};
+      var stock = Number(p.stock_qty) > 0
+        ? KT.esc(p.stock_qty)
+        : '<span class="badge celular">Agotado</span>';
       return '<tr data-id="' + KT.esc(p.id) + '">' +
-        '<td>' + (p.image_url ? '<img class="thumb" src="' + KT.esc(p.image_url) + '" alt="">' : '<div class="thumb">' + KT.icon(p.type === 'celular' ? 'smartphone' : 'shield-check') + '</div>') + '</td>' +
-        '<td>' + KT.esc(p.name) + (p.featured ? ' <span style="color:#fbbf24">' + KT.icon('star') + '</span>' : '') + '</td>' +
-        '<td><span class="badge ' + p.type + '">' + (p.type === 'celular' ? 'Bajo pedido' : 'En tienda') + '</span></td>' +
+        '<td>' + (w.image_url ? '<img class="thumb" src="' + KT.esc(w.image_url) + '" alt="">' : '<div class="thumb">' + KT.icon('shield-check') + '</div>') + '</td>' +
+        '<td>' + KT.esc(p.name) + (w.featured ? ' <span style="color:#fbbf24">' + KT.icon('star') + '</span>' : '') +
+          '<br><small>' + KT.esc(p.code) + (p.brand ? ' · ' + KT.esc(p.brand) : '') + '</small></td>' +
         '<td>' + KT.esc(catName(p.category_id)) + '</td>' +
-        '<td>' + KT.money(p.price) + '</td>' +
-        '<td>' + (p.type === 'estuche' ? KT.esc(p.stock || 0) : '—') + '</td>' +
-        '<td><label class="switch"><input type="checkbox" data-act="toggle"' + (p.active ? ' checked' : '') + '><span></span></label></td>' +
-        '<td class="actions-td"><button class="btn btn-ghost btn-sm" data-act="edit">Editar</button>' +
-        '<button class="btn btn-danger btn-sm" data-act="del">Borrar</button></td></tr>';
-    }).join('') : '<tr><td colspan="8" class="empty-row">No hay productos todavía.</td></tr>';
+        '<td>' + KT.money(p.price_cop) + '</td>' +
+        '<td>' + stock + '</td>' +
+        '<td><label class="switch"><input type="checkbox" data-act="toggle"' + (w.visible ? ' checked' : '') + '><span></span></label></td>' +
+        '<td class="actions-td"><button class="btn btn-ghost btn-sm" data-act="edit">Foto y detalles</button></td></tr>';
+    }).join('') : '<tr><td colspan="7" class="empty-row">No hay productos con ese filtro. Los productos se crean en el POS.</td></tr>';
   }
 
   function openProduct(p) {
-    state.editing = p || null; state.newImage = null; state.removeImage = false;
-    $('pTitle').textContent = p ? 'Editar producto' : 'Nuevo producto';
-    $('pType').value = p ? p.type : 'celular';
-    fillCatSelect($('pType').value, p && p.category_id);
-    $('pName').value = p ? p.name : '';
-    $('pBrand').value = p ? p.brand || '' : '';
-    $('pPrice').value = p && p.price != null ? p.price : '';
-    $('pStock').value = p ? p.stock || 0 : 0;
-    $('pDesc').value = p ? p.description || '' : '';
-    $('pSpecs').value = p ? p.specs || '' : '';
-    $('pActive').checked = p ? !!p.active : true;
-    $('pFeatured').checked = p ? !!p.featured : false;
+    var w = webOf(p) || {};
+    state.editing = p; state.newImage = null; state.removeImage = false;
+    $('pTitle').textContent = p.name;
+    $('pPos').textContent = p.code + ' · ' + catName(p.category_id) + ' · ' + KT.money(p.price_cop) + ' · Existencias: ' + (p.stock_qty || 0) + ' (se cambian en el POS)';
+    $('pDesc').value = w.description || '';
+    $('pVisible').checked = !!w.visible;
+    $('pFeatured').checked = !!w.featured;
     $('pFile').value = '';
     var img = $('pPreview');
-    if (p && p.image_url) { img.src = p.image_url; img.hidden = false; } else { img.hidden = true; img.removeAttribute('src'); }
+    if (w.image_url) { img.src = w.image_url; img.hidden = false; } else { img.hidden = true; img.removeAttribute('src'); }
+    $('pRemoveImg').hidden = !w.image_url;
     $('pInfo').textContent = '';
-    $('stockWrap').hidden = $('pType').value !== 'estuche';
     $('productDialog').showModal();
   }
 
-  async function uploadImage(blob, type) {
-    var path = type + '/' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.webp';
+  async function uploadImage(blob, productId) {
+    var path = productId + '/' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.webp';
     var up = await db.storage.from(KT_CONFIG.BUCKET).upload(path, blob, { contentType: 'image/webp', cacheControl: '31536000', upsert: false });
     if (up.error) throw up.error;
     return db.storage.from(KT_CONFIG.BUCKET).getPublicUrl(path).data.publicUrl;
@@ -115,13 +121,13 @@
     e.preventDefault();
     var btn = $('pSave'); btn.disabled = true; btn.textContent = 'Guardando…';
     try {
-      var type = $('pType').value;
-      var old = state.editing;
-      var image_url = old ? old.image_url : null;
+      var p = state.editing;
+      var w = webOf(p) || {};
+      var image_url = w.image_url || null;
       var oldPath = storagePath(image_url);
 
       if (state.newImage) {
-        image_url = await uploadImage(state.newImage.blob, type);
+        image_url = await uploadImage(state.newImage.blob, p.id);
         if (oldPath) await db.storage.from(KT_CONFIG.BUCKET).remove([oldPath]);
       } else if (state.removeImage) {
         image_url = null;
@@ -129,95 +135,21 @@
       }
 
       var row = {
-        name: $('pName').value.trim(),
-        type: type,
-        category_id: $('pCat').value || null,
-        brand: $('pBrand').value.trim() || null,
-        price: $('pPrice').value === '' ? null : Number($('pPrice').value),
-        stock: type === 'estuche' ? Number($('pStock').value || 0) : 0,
-        description: $('pDesc').value.trim() || null,
-        specs: $('pSpecs').value.trim() || null,
-        active: $('pActive').checked,
+        product_id: p.id,
+        visible: $('pVisible').checked,
         featured: $('pFeatured').checked,
-        image_url: image_url
+        description: $('pDesc').value.trim() || null,
+        image_url: image_url,
+        updated_at: new Date().toISOString()
       };
-      var res = old
-        ? await db.from('products').update(row).eq('id', old.id)
-        : await db.from('products').insert(row);
+      var res = await db.from('product_web').upsert(row, { onConflict: 'product_id' });
       if (res.error) throw res.error;
       $('productDialog').close();
-      KT.toast('Producto guardado');
+      KT.toast('Guardado');
       await loadAll();
     } catch (err) {
       KT.toast('No se pudo guardar: ' + err.message, 'error');
     } finally { btn.disabled = false; btn.textContent = 'Guardar'; }
-  }
-
-  async function deleteProduct(p) {
-    if (!confirm('¿Borrar "' + p.name + '"? Esta acción no se puede deshacer.')) return;
-    var path = storagePath(p.image_url);
-    var r = await db.from('products').delete().eq('id', p.id);
-    if (r.error) return KT.toast(r.error.message, 'error');
-    if (path) await db.storage.from(KT_CONFIG.BUCKET).remove([path]);
-    KT.toast('Producto eliminado');
-    loadAll();
-  }
-
-  /* ---------- Categorías ---------- */
-  function renderCategories() {
-    $('categoryRows').innerHTML = state.cats.length ? state.cats.map(function (c) {
-      var n = state.products.filter(function (p) { return p.category_id === c.id; }).length;
-      return '<tr data-id="' + KT.esc(c.id) + '"><td>' + KT.esc(c.name) + '</td>' +
-        '<td><span class="badge ' + c.type + '">' + (c.type === 'celular' ? 'Celulares' : 'Accesorios') + '</span></td>' +
-        '<td>' + n + '</td>' +
-        '<td class="actions-td"><button class="btn btn-ghost btn-sm" data-act="edit">Editar</button>' +
-        '<button class="btn btn-danger btn-sm" data-act="del">Borrar</button></td></tr>';
-    }).join('') : '<tr><td colspan="4" class="empty-row">Aún no hay categorías.</td></tr>';
-    markQuick();
-  }
-
-  // Deshabilita las sugeridas que ya existen
-  function markQuick() {
-    document.querySelectorAll('#quickBtns [data-quick]').forEach(function (b) {
-      var exists = state.cats.some(function (c) {
-        return c.type === 'estuche' && KT.slug(c.name) === KT.slug(b.dataset.quick);
-      });
-      b.disabled = exists;
-      b.title = exists ? 'Ya existe' : 'Agregar categoría';
-    });
-  }
-
-  async function quickAddCategory(name) {
-    var r = await db.from('categories').insert({ name: name, type: 'estuche', slug: KT.slug(name) });
-    if (r.error) return KT.toast(r.error.message, 'error');
-    KT.toast('Categoría "' + name + '" agregada'); loadAll();
-  }
-
-  function openCategory(c) {
-    state.editingCat = c || null;
-    $('cTitle').textContent = c ? 'Editar categoría' : 'Nueva categoría';
-    $('cName').value = c ? c.name : '';
-    $('cType').value = c ? c.type : 'celular';
-    $('categoryDialog').showModal();
-  }
-
-  async function saveCategory(e) {
-    e.preventDefault();
-    var row = { name: $('cName').value.trim(), type: $('cType').value, slug: KT.slug($('cName').value) };
-    var r = state.editingCat
-      ? await db.from('categories').update(row).eq('id', state.editingCat.id)
-      : await db.from('categories').insert(row);
-    if (r.error) return KT.toast(r.error.message, 'error');
-    $('categoryDialog').close(); KT.toast('Categoría guardada'); loadAll();
-  }
-
-  async function deleteCategory(c) {
-    var n = state.products.filter(function (p) { return p.category_id === c.id; }).length;
-    var msg = '¿Borrar la categoría "' + c.name + '"?' + (n ? ' Sus ' + n + ' productos quedarán sin categoría.' : '');
-    if (!confirm(msg)) return;
-    var r = await db.from('categories').delete().eq('id', c.id);
-    if (r.error) return KT.toast(r.error.message, 'error');
-    KT.toast('Categoría eliminada'); loadAll();
   }
 
   /* ---------- Ajustes ---------- */
@@ -230,7 +162,7 @@
       { key: 'tiktok', value: $('sTiktok').value.trim() },
       { key: 'repair_text', value: $('sRepair').value.trim() }
     ];
-    var r = await db.from('settings').upsert(rows);
+    var r = await db.from('web_settings').upsert(rows, { onConflict: 'key' });
     r.error ? KT.toast(r.error.message, 'error') : KT.toast('Ajustes guardados');
   }
 
@@ -251,35 +183,22 @@
       document.querySelectorAll('.tab').forEach(function (t) { t.hidden = t.id !== 'tab-' + b.dataset.tab; });
     });
 
-    $('fType').addEventListener('change', renderProducts);
+    $('fView').addEventListener('change', renderProducts);
     $('fSearch').addEventListener('input', renderProducts);
-    $('newProduct').addEventListener('click', function () { openProduct(null); });
-    $('newCategory').addEventListener('click', function () { openCategory(null); });
 
     $('productRows').addEventListener('click', async function (e) {
       var tr = e.target.closest('tr'); var act = e.target.dataset.act; if (!tr || !act) return;
       var p = state.products.find(function (x) { return x.id === tr.dataset.id; });
       if (act === 'edit') openProduct(p);
-      if (act === 'del') deleteProduct(p);
       if (act === 'toggle') {
-        var r = await db.from('products').update({ active: e.target.checked }).eq('id', p.id);
-        if (r.error) { KT.toast(r.error.message, 'error'); e.target.checked = !e.target.checked; } else p.active = e.target.checked;
+        var on = e.target.checked;
+        var r = await db.from('product_web').upsert({ product_id: p.id, visible: on, updated_at: new Date().toISOString() }, { onConflict: 'product_id' });
+        if (r.error) { KT.toast(r.error.message, 'error'); e.target.checked = !on; return; }
+        var w = webOf(p) || {};
+        w.visible = on;
+        p.product_web = w;
+        KT.toast(on ? (w.image_url ? 'Publicado en la tienda' : 'Publicado (sin foto todavía)') : 'Ocultado de la tienda');
       }
-    });
-    $('quickBtns').addEventListener('click', function (e) {
-      var b = e.target.closest('[data-quick]');
-      if (b && !b.disabled && db) quickAddCategory(b.dataset.quick);
-    });
-    $('categoryRows').addEventListener('click', function (e) {
-      var tr = e.target.closest('tr'); var act = e.target.dataset.act; if (!tr || !act) return;
-      var c = state.cats.find(function (x) { return x.id === tr.dataset.id; });
-      if (act === 'edit') openCategory(c);
-      if (act === 'del') deleteCategory(c);
-    });
-
-    $('pType').addEventListener('change', function () {
-      fillCatSelect($('pType').value, null);
-      $('stockWrap').hidden = $('pType').value !== 'estuche';
     });
 
     $('pFile').addEventListener('change', async function (e) {
@@ -289,12 +208,17 @@
         var r = await KT.compressImage(f);
         state.newImage = r; state.removeImage = false;
         $('pPreview').src = URL.createObjectURL(r.blob); $('pPreview').hidden = false;
+        $('pRemoveImg').hidden = false;
         $('pInfo').textContent = kb(r.originalSize) + ' → ' + kb(r.size) + ' (' + r.width + '×' + r.height + ', WebP)';
       } catch (err) { $('pInfo').textContent = ''; KT.toast(err.message, 'error'); e.target.value = ''; }
     });
+    $('pRemoveImg').addEventListener('click', function () {
+      state.newImage = null; state.removeImage = true;
+      $('pFile').value = ''; $('pPreview').hidden = true; $('pPreview').removeAttribute('src');
+      $('pRemoveImg').hidden = true; $('pInfo').textContent = 'La foto se quitará al guardar.';
+    });
 
     $('productForm').addEventListener('submit', saveProduct);
-    $('categoryForm').addEventListener('submit', saveCategory);
     $('settingsForm').addEventListener('submit', saveSettings);
 
     document.querySelectorAll('dialog [data-close]').forEach(function (b) {

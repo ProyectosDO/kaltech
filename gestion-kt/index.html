@@ -31,45 +31,28 @@
     <strong>Kal<b>tech</b> · Admin</strong>
     <nav class="tabs" id="tabs">
       <button data-tab="products" class="active">Productos</button>
-      <button data-tab="categories">Categorías</button>
       <button data-tab="settings">Ajustes</button>
     </nav>
     <button class="btn btn-ghost btn-sm" id="logoutBtn"><svg class="ic"><use href="#i-log-out"/></svg> Salir</button>
   </header>
 
   <main class="panel">
-    <!-- Productos -->
+    <!-- Productos (vienen del POS) -->
     <div id="tab-products" class="tab">
       <div class="bar">
-        <h2>Productos</h2>
-        <select id="fType"><option value="">Todos los tipos</option><option value="celular">Celulares (segunda mano, bajo pedido)</option><option value="estuche">Accesorios (en tienda)</option></select>
-        <input type="search" id="fSearch" placeholder="Buscar…">
-        <button class="btn btn-primary btn-sm" id="newProduct"><svg class="ic"><use href="#i-plus"/></svg> Nuevo producto</button>
+        <h2>Productos del inventario</h2>
+        <select id="fView">
+          <option value="all">Todos</option>
+          <option value="web">Publicados en la web</option>
+          <option value="hidden">Sin publicar</option>
+          <option value="nophoto">Sin foto</option>
+        </select>
+        <input type="search" id="fSearch" placeholder="Buscar por nombre o código…">
       </div>
+      <p class="hint">Los productos, precios y existencias se manejan en el sistema de ventas (POS). Aquí solo eliges cuáles se publican y les pones foto y descripción. Un producto nuevo del POS aparece aquí, pero no se ve en la tienda hasta que lo publiques.</p>
       <div class="table-wrap"><table>
-        <thead><tr><th></th><th>Nombre</th><th>Tipo</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Visible</th><th></th></tr></thead>
+        <thead><tr><th></th><th>Producto</th><th>Categoría</th><th>Precio</th><th>Existencias</th><th>En la web</th><th></th></tr></thead>
         <tbody id="productRows"></tbody>
-      </table></div>
-    </div>
-
-    <!-- Categorías -->
-    <div id="tab-categories" class="tab" hidden>
-      <div class="bar">
-        <h2>Categorías</h2>
-        <button class="btn btn-primary btn-sm" id="newCategory"><svg class="ic"><use href="#i-plus"/></svg> Nueva categoría</button>
-      </div>
-      <div class="quick" id="quickCats">
-        <p><strong>Categorías de accesorios:</strong> así los clientes encuentran los productos más rápido. Toca para agregar una sugerida o crea la tuya con "Nueva categoría". Solo se muestran en la tienda las que tengan productos.</p>
-        <div class="quick-btns" id="quickBtns">
-          <button type="button" class="btn btn-ghost btn-sm" data-quick="Estuches"><svg class="ic"><use href="#i-plus"/></svg> Estuches</button>
-          <button type="button" class="btn btn-ghost btn-sm" data-quick="Cargadores"><svg class="ic"><use href="#i-plus"/></svg> Cargadores</button>
-          <button type="button" class="btn btn-ghost btn-sm" data-quick="Audífonos"><svg class="ic"><use href="#i-plus"/></svg> Audífonos</button>
-          <button type="button" class="btn btn-ghost btn-sm" data-quick="Cables"><svg class="ic"><use href="#i-plus"/></svg> Cables</button>
-        </div>
-      </div>
-      <div class="table-wrap"><table>
-        <thead><tr><th>Nombre</th><th>Tipo</th><th>Productos</th><th></th></tr></thead>
-        <tbody id="categoryRows"></tbody>
       </table></div>
     </div>
 
@@ -94,50 +77,23 @@
   </main>
 </section>
 
-<!-- Modal producto -->
+<!-- Modal producto: solo datos de la web -->
 <dialog id="productDialog">
   <form id="productForm" class="form-card">
-    <h3 id="pTitle">Nuevo producto</h3>
-    <div class="row2">
-      <label>Tipo
-        <select id="pType" required>
-          <option value="celular">Celular (segunda mano, bajo pedido)</option>
-          <option value="estuche">Accesorio (estuche, cargador, etc. · en tienda)</option>
-        </select></label>
-      <label>Categoría <select id="pCat"></select></label>
-    </div>
-    <label>Nombre <input id="pName" required maxlength="120"></label>
-    <div class="row2">
-      <label>Marca <input id="pBrand" maxlength="60"></label>
-      <label>Precio (COP) <input id="pPrice" type="number" min="0" step="1000"></label>
-    </div>
-    <label id="stockWrap">Stock disponible (accesorios) <input id="pStock" type="number" min="0" value="0"></label>
-    <label>Descripción <textarea id="pDesc" rows="2"></textarea></label>
-    <label>Especificaciones (una por línea) <textarea id="pSpecs" rows="3"></textarea></label>
+    <h3 id="pTitle">Producto</h3>
+    <p class="hint" id="pPos"></p>
     <label>Imagen (se comprime automáticamente)
       <input id="pFile" type="file" accept="image/*"></label>
     <div class="preview"><img id="pPreview" alt="" hidden><small id="pInfo"></small></div>
+    <button type="button" class="btn btn-ghost btn-sm" id="pRemoveImg" hidden>Quitar foto</button>
+    <label>Descripción (opcional) <textarea id="pDesc" rows="3"></textarea></label>
     <div class="checks">
-      <label class="chk"><input type="checkbox" id="pActive" checked> Visible en la tienda</label>
+      <label class="chk"><input type="checkbox" id="pVisible"> Publicado en la tienda</label>
       <label class="chk"><input type="checkbox" id="pFeatured"> Destacado</label>
     </div>
     <div class="actions">
       <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
       <button type="submit" class="btn btn-primary" id="pSave">Guardar</button>
-    </div>
-  </form>
-</dialog>
-
-<!-- Modal categoría -->
-<dialog id="categoryDialog">
-  <form id="categoryForm" class="form-card">
-    <h3 id="cTitle">Nueva categoría</h3>
-    <label>Nombre <input id="cName" required maxlength="60"></label>
-    <label>Tipo
-      <select id="cType"><option value="celular">Celulares</option><option value="estuche">Accesorios</option></select></label>
-    <div class="actions">
-      <button type="button" class="btn btn-ghost" data-close>Cancelar</button>
-      <button type="submit" class="btn btn-primary">Guardar</button>
     </div>
   </form>
 </dialog>

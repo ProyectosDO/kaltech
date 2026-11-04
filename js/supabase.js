@@ -7,23 +7,28 @@ KT.db = KT.configured
   ? window.supabase.createClient(KT_CONFIG.SUPABASE_URL, KT_CONFIG.SUPABASE_ANON_KEY)
   : null;
 
+/*
+ * La página lee el inventario del POS a través de vistas públicas de solo lectura:
+ *   public_categories · public_products · web_settings   (ver supabase/catalogo-web.sql)
+ * Nada de costos, ventas ni clientes es visible desde aquí.
+ */
 KT.api = {
   async getCategories() {
     if (!KT.db) return KT.demo.categories;
-    const { data, error } = await KT.db.from('categories').select('*').order('name');
+    const { data, error } = await KT.db.from('public_categories').select('*').order('name');
     if (error) throw error;
     return data;
   },
   async getProducts() {
     if (!KT.db) return KT.demo.products;
-    const { data, error } = await KT.db.from('products').select('*')
-      .eq('active', true).order('featured', { ascending: false }).order('created_at', { ascending: false });
+    const { data, error } = await KT.db.from('public_products').select('*')
+      .order('featured', { ascending: false }).order('created_at', { ascending: false });
     if (error) throw error;
     return data;
   },
   async getSettings() {
     if (!KT.db) return {};
-    const { data, error } = await KT.db.from('settings').select('*');
+    const { data, error } = await KT.db.from('web_settings').select('*');
     if (error) return {};
     const out = {};
     data.forEach(function (r) { out[r.key] = r.value; });
