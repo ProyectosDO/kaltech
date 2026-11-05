@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="assets/img/hero-bg.webp">
-  <link rel="stylesheet" href="css/styles.css?v=20261105a">
+  <link rel="stylesheet" href="css/styles.css?v=20261105d">
 </head>
 <body>
 
@@ -54,29 +54,10 @@
       <div class="hero-text">
         <h1>Todo lo que tu celular necesita, en un solo lugar.<span class="grad">Accesorios + Servicio técnico</span></h1>
         <p class="lead" id="heroLead">Encuentra estuches, audífonos, cargadores, protectores y mucho más. Estamos para ayudarte.</p>
-        <ul class="trust">
-          <li><span class="trust-ic"><svg class="ic"><use href="#i-shield-check"/></svg></span><span>Productos<br>de calidad</span></li>
-          <li><span class="trust-ic"><svg class="ic"><use href="#i-award"/></svg></span><span>Garantía<br>en reparaciones</span></li>
-          <li><span class="trust-ic"><svg class="ic"><use href="#i-clock"/></svg></span><span>Atención<br>rápida y segura</span></li>
-        </ul>
+        <a class="location" href="https://www.google.com/maps/search/?api=1&amp;query=Barrio+La+Uni%C3%B3n+semaforo+del+Coliseo+Orito+Putumayo" target="_blank" rel="noopener"><svg class="ic"><use href="#i-map-pin"/></svg><span>Barrio La Unión, semáforo del Coliseo · Orito, Putumayo</span></a>
       </div>
 
       <div class="hero-visual" aria-hidden="true"></div>
-
-      <ul class="feature-list">
-        <li><a class="feature f-purple" href="#accesorios" data-feature="cases">
-          <span class="icon-tile"><svg class="ic"><use href="#i-shield-check"/></svg></span>
-          <div><strong>Accesorios</strong><small>Disponibles en tienda</small></div>
-          <span class="go"><svg class="ic"><use href="#i-chevron-right"/></svg></span></a></li>
-        <li data-feature="phones"><a class="feature f-blue" href="#celulares">
-          <span class="icon-tile"><svg class="ic"><use href="#i-smartphone"/></svg></span>
-          <div><strong>Celulares</strong><small>Segunda mano</small></div>
-          <span class="go"><svg class="ic"><use href="#i-chevron-right"/></svg></span></a></li>
-        <li><a class="feature f-cyan" href="#reparaciones">
-          <span class="icon-tile"><svg class="ic"><use href="#i-phone-service"/></svg></span>
-          <div><strong>Reparación</strong><small>Todas las marcas</small></div>
-          <span class="go"><svg class="ic"><use href="#i-chevron-right"/></svg></span></a></li>
-      </ul>
     </div>
 
     <div class="hero-strip">
@@ -93,7 +74,7 @@
         <span class="eyebrow-sm">En tienda</span>
         <h2>Accesorios</h2>
       </div>
-      <div class="cat-tiles" id="chipsCases" aria-label="Categorías de accesorios"></div>
+      <div class="chips cat-chips" id="chipsCases" aria-label="Categorías de accesorios"></div>
       <div class="toolbar">
         <label class="search"><svg class="ic"><use href="#i-search"/></svg>
           <input type="search" id="searchCases" placeholder="Buscar accesorio o modelo" aria-label="Buscar accesorios"></label>
@@ -151,6 +132,7 @@
 <footer class="site-footer">
   <div class="container footer-inner">
     <span>© <span id="year"></span> Kaltech · Reparación y Tecnología</span>
+    <a class="footer-loc" href="https://www.google.com/maps/search/?api=1&amp;query=Barrio+La+Uni%C3%B3n+semaforo+del+Coliseo+Orito+Putumayo" target="_blank" rel="noopener"><svg class="ic"><use href="#i-map-pin"/></svg>Barrio La Unión, semáforo del Coliseo, Orito, Putumayo</a>
     <nav aria-label="Pie de página">
       <a href="#accesorios" data-feature="cases">Accesorios</a>
       <a href="#celulares" data-feature="phones">Celulares</a>
@@ -170,12 +152,12 @@
 <dialog id="cartDrawer" class="drawer" aria-label="Carrito"></dialog>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/config.js?v=20261105a"></script>
-<script src="js/utils.js?v=20261105a"></script>
-<script src="js/icons.js?v=20261105a"></script>
-<script src="js/supabase.js?v=20261105a"></script>
-<script src="js/cart.js?v=20261105a"></script>
-<script src="js/demo-data.js?v=20261105a"></script>
-<script src="js/catalog.js?v=20261105a"></script>
+<script src="js/config.js?v=20261105d"></script>
+<script src="js/utils.js?v=20261105d"></script>
+<script src="js/icons.js?v=20261105d"></script>
+<script src="js/supabase.js?v=20261105d"></script>
+<script src="js/cart.js?v=20261105d"></script>
+<script src="js/demo-data.js?v=20261105d"></script>
+<script src="js/catalog.js?v=20261105d"></script>
 </body>
 </html>

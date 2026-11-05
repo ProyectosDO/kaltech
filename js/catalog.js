@@ -5,7 +5,7 @@
     filter: { celular: 'all', estuche: 'all' },
     search: { celular: '', estuche: '' }
   };
-  var wa = KT_CONFIG.WHATSAPP_DEFAULT;
+  var wa = String(KT_CONFIG.WHATSAPP_DEFAULT || '').replace(/\D/g, '');
 
   var $ = function (id) { return document.getElementById(id); };
   // Secciones que se pueden activar/ocultar desde js/config.js
@@ -22,8 +22,6 @@
     removeFeature('phones');
     $('brandSub').textContent = 'Accesorios · Reparaciones';
   }
-  var fl = document.querySelector('.feature-list');
-  if (fl) fl.setAttribute('data-count', fl.children.length);
 
   // Alterna los fondos de las secciones que quedan visibles
   Array.prototype.forEach.call(document.querySelectorAll('main > section.section'), function (sec, i) {
@@ -109,21 +107,7 @@
     if (cur !== 'all' && !cats.some(function (c) { return c.id === cur; })) cur = state.filter[type] = 'all';
     var box = els[type].chips;
 
-    if (type === 'estuche') {
-      // Categorías con icono (accesorios)
-      box.hidden = !cats.length;
-      var html = '<button class="chip cat-tile' + (cur === 'all' ? ' active' : '') + '" data-cat="all">' +
-        '<span class="icon-tile">' + KT.icon('grid') + '</span><b>Todos</b></button>';
-      cats.forEach(function (c) {
-        html += '<button class="chip cat-tile' + (cur === c.id ? ' active' : '') + '" data-cat="' + KT.esc(c.id) + '">' +
-          '<span class="icon-tile">' + KT.icon(catIcon(c.name)) + '</span>' +
-          '<b>' + KT.esc(c.name) + '</b></button>';
-      });
-      box.innerHTML = html;
-      return;
-    }
-
-    // Celulares: chips simples por marca
+    // Categorías: botones pequeños (chips)
     box.hidden = !cats.length;
     var h = '<button class="chip' + (cur === 'all' ? ' active' : '') + '" data-cat="all">Todos</button>';
     cats.forEach(function (c) {
@@ -236,7 +220,8 @@
 
   function applySettings() {
     var s = state.settings;
-    if (s.whatsapp) wa = s.whatsapp;
+    // El número de js/config.js manda; el de Supabase (web_settings) solo se usa si config.js está vacío
+    if (!wa && s.whatsapp) wa = String(s.whatsapp).replace(/\D/g, '');
     if (s.repair_text) $('repairText').textContent = s.repair_text;
     var general = KT.waLink(wa, 'Hola Kaltech, quiero más información.');
     ['waFloat', 'navWa'].forEach(function (id) { $(id).href = general; });
@@ -273,6 +258,7 @@
     $('year').textContent = new Date().getFullYear();
     bind();
     spy();
+    applySettings(); // los botones de WhatsApp funcionan desde el primer momento
     try {
       var res = await Promise.all([KT.api.getCategories(), KT.api.getProducts(), KT.api.getSettings()]);
       state.cats = res[0]; state.products = res[1]; state.settings = res[2];
