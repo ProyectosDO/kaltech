@@ -10,75 +10,56 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=20261105i">
+  <link rel="stylesheet" href="css/styles.css?v=20261105j">
 </head>
 <body>
 
-<header class="site-header">
+<header class="site-header dk">
   <div class="container header-inner">
     <a href="#inicio" class="brand" aria-label="Kaltech">
       <img id="brandLogo" src="assets/img/logo.png" alt="Kaltech" width="56" height="56" onerror="this.style.display='none'">
-      <span class="brand-text">
-        <span class="brand-name">Kal<b>tech</b></span>
-        <small id="brandSub">Accesorios · Celulares · Reparaciones</small>
-      </span>
+      <span class="brand-text"><span class="brand-name">Kal<b>tech</b></span><small id="brandSub">Tecnología a tu alcance</small></span>
     </a>
-    <nav id="mainNav" class="main-nav" aria-label="Principal">
-      <a href="#inicio" data-spy="inicio"><svg class="ic"><use href="#i-home"/></svg>Inicio</a>
-      <div class="socials" id="socials" aria-label="Redes sociales">
-        <a class="social-btn so-ig" id="soIg" href="#" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><svg class="ic"><use href="#i-instagram"/></svg></a>
-        <a class="social-btn so-fb" id="soFb" href="#" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook"><svg class="ic"><use href="#i-facebook"/></svg></a>
-        <a class="social-btn so-tt" id="soTt" href="#" target="_blank" rel="noopener" aria-label="TikTok" title="TikTok"><svg class="ic"><use href="#i-tiktok"/></svg></a>
-      </div>
-      <a class="btn btn-wa nav-cta" id="navWa" href="#" target="_blank" rel="noopener">
-        <svg class="ic"><use href="#i-whatsapp"/></svg> WhatsApp <svg class="ic chev"><use href="#i-chevron-right"/></svg>
-      </a>
-    </nav>
-    <div class="header-actions">
-      <button class="icon-btn cart-btn" id="cartBtn" data-feature="cases" aria-label="Abrir carrito" title="Carrito">
+    <label class="search hdr-search" data-feature="cases"><svg class="ic"><use href="#i-search"/></svg><input type="search" id="searchCases" placeholder="Buscar productos..." aria-label="Buscar productos"></label>
+    <div class="header-actions"><button class="icon-btn cart-btn" id="cartBtn" data-feature="cases" aria-label="Abrir carrito" title="Carrito">
         <svg class="ic"><use href="#i-cart"/></svg>
         <span class="cart-count" id="cartCount" hidden>0</span>
-      </button>
-      <button class="icon-btn nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
-        <svg class="ic"><use href="#i-menu"/></svg>
-      </button>
-    </div>
+      </button></div>
+    <div hidden><nav id="mainNav"></nav><button id="navToggle" type="button"></button><a id="navWa"></a></div>
   </div>
+  <div class="cat-bar" data-feature="cases"><div class="container cat-inner">
+    <a class="cat-all" href="#accesorios"><svg class="ic"><use href="#i-menu"/></svg>Categorías</a>
+    <div class="chips cat-chips" id="chipsCases" aria-label="Categorías de accesorios"></div>
+  </div></div>
 </header>
 
 <main>
   <!-- HERO -->
-  <section id="inicio" class="hero">
-    <div class="container hero-inner">
-      <div class="hero-text">
-        <h1>Todo lo que tu celular necesita, en un solo lugar.<span class="grad">Accesorios + Servicio técnico</span></h1>
-        <p class="lead" id="heroLead">Encuentra estuches, audífonos, cargadores, protectores y mucho más. Estamos para ayudarte.</p>
-        <a class="location" href="https://www.google.com/maps/search/?api=1&amp;query=Barrio+La+Uni%C3%B3n+semaforo+del+Coliseo+Orito+Putumayo" target="_blank" rel="noopener"><svg class="ic"><use href="#i-map-pin"/></svg><span>Barrio La Unión, semáforo del Coliseo · Orito, Putumayo</span></a>
+  <section id="inicio" class="home">
+    <div class="container">
+      <div class="hero-card dk">
+        <div class="hero-copy">
+          <h1>Conecta, disfruta y vive la <span class="grad">tecnología</span></h1>
+          <span class="hero-pill">Accesorios + Servicio técnico</span>
+          <a class="btn btn-primary" href="#accesorios">Ver catálogo <svg class="ic"><use href="#i-chevron-right"/></svg></a>
+        </div>
       </div>
-
-      <figure class="hero-banner"><img src="assets/img/banner.webp" srcset="assets/img/banner-sm.webp 828w, assets/img/banner.webp 1600w" sizes="(max-width:1000px) 100vw, 760px" width="2048" height="768" alt="Kaltech: audífonos, cargadores y accesorios para tu celular" fetchpriority="high" decoding="async"></figure>
-    </div>
-
-    <div class="hero-strip">
-      <div class="container strip-inner">
-        <span class="strip-r">Tecnología <i>·</i> Calidad <i>·</i> Confianza</span>
-      </div>
+      <ul class="trust-strip"><li><svg class="ic"><use href="#i-shield-check"/></svg><span>Compra<br>segura</span></li><li><svg class="ic"><use href="#i-truck"/></svg><span>Envíos a<br>todo el país</span></li><li><svg class="ic"><use href="#i-headphones"/></svg><span>Soporte<br>especializado</span></li><li><svg class="ic"><use href="#i-map-pin"/></svg><span>Compra local<br>en Orito</span></li></ul>
     </div>
   </section>
 
   <!-- ACCESORIOS -->
   <section id="accesorios" class="section" data-feature="cases">
     <div class="container">
-      <div class="section-head">
-        <span class="eyebrow-sm">Catálogo</span>
-        <h2>Accesorios</h2>
-      </div>
-      <div class="chips cat-chips" id="chipsCases" aria-label="Categorías de accesorios"></div>
-      <div class="toolbar">
-        <label class="search"><svg class="ic"><use href="#i-search"/></svg>
-          <input type="search" id="searchCases" placeholder="Buscar accesorio o modelo" aria-label="Buscar accesorios"></label>
+      <div class="sec-head">
+        <h2>Productos destacados</h2>
+        <button class="btn btn-primary btn-sm" id="seeAll" type="button" hidden>Ver todos <svg class="ic"><use href="#i-arrow-right"/></svg></button>
       </div>
       <div class="grid" id="gridCases"></div>
+      <div class="promos">
+        <a class="promo p1 dk" href="#accesorios" data-promo="estuche"><div><h3>Estuches<br>con estilo</h3><p>Protege tu celular con el mejor diseño</p><span class="promo-btn">Ver más <svg class="ic"><use href="#i-arrow-right"/></svg></span></div><svg class="promo-ic"><use href="#i-shield-check"/></svg></a>
+        <a class="promo p2 dk" href="#accesorios" data-promo="audifon"><div><h3>Audífonos<br>deportivos</h3><p>Entrena, conduce y disfruta tu música</p><span class="promo-btn">Ver más <svg class="ic"><use href="#i-arrow-right"/></svg></span></div><svg class="promo-ic"><use href="#i-headphones"/></svg></a>
+      </div>
     </div>
   </section>
 
@@ -128,16 +109,16 @@
   </section>
 </main>
 
-<footer class="site-footer">
+<footer class="site-footer dk">
   <div class="container footer-inner">
-    <span>© <span id="year"></span> Kaltech · Reparación y Tecnología</span>
-    <a class="footer-loc" href="https://www.google.com/maps/search/?api=1&amp;query=Barrio+La+Uni%C3%B3n+semaforo+del+Coliseo+Orito+Putumayo" target="_blank" rel="noopener"><svg class="ic"><use href="#i-map-pin"/></svg>Barrio La Unión, semáforo del Coliseo, Orito, Putumayo</a>
-    <nav aria-label="Pie de página">
-      <a href="#accesorios" data-feature="cases">Accesorios</a>
-      <a href="#celulares" data-feature="phones">Celulares</a>
-      <a href="#reparaciones">Reparaciones</a>
-    </nav>
+    <a class="footer-loc" href="https://www.google.com/maps/search/?api=1&amp;query=Barrio+La+Uni%C3%B3n+semaforo+del+Coliseo+Orito+Putumayo" target="_blank" rel="noopener"><svg class="ic"><use href="#i-map-pin"/></svg><span>Barrio La Unión, semáforo del Coliseo · Orito, Putumayo</span></a>
+    <div class="foot-soc"><span>Síguenos en:</span><div class="socials" id="socials" aria-label="Redes sociales">
+        <a class="social-btn so-ig" id="soIg" href="#" target="_blank" rel="noopener" aria-label="Instagram" title="Instagram"><svg class="ic"><use href="#i-instagram"/></svg></a>
+        <a class="social-btn so-fb" id="soFb" href="#" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook"><svg class="ic"><use href="#i-facebook"/></svg></a>
+        <a class="social-btn so-tt" id="soTt" href="#" target="_blank" rel="noopener" aria-label="TikTok" title="TikTok"><svg class="ic"><use href="#i-tiktok"/></svg></a>
+      </div></div>
   </div>
+  <p class="copy">© <span id="year"></span> Kaltech</p>
 </footer>
 
 <a class="wa-float" id="waFloat" href="#" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
@@ -151,12 +132,12 @@
 <dialog id="cartDrawer" class="drawer" aria-label="Carrito"></dialog>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/config.js?v=20261105i"></script>
-<script src="js/utils.js?v=20261105i"></script>
-<script src="js/icons.js?v=20261105i"></script>
-<script src="js/supabase.js?v=20261105i"></script>
-<script src="js/cart.js?v=20261105i"></script>
-<script src="js/demo-data.js?v=20261105i"></script>
-<script src="js/catalog.js?v=20261105i"></script>
+<script src="js/config.js?v=20261105j"></script>
+<script src="js/utils.js?v=20261105j"></script>
+<script src="js/icons.js?v=20261105j"></script>
+<script src="js/supabase.js?v=20261105j"></script>
+<script src="js/cart.js?v=20261105j"></script>
+<script src="js/demo-data.js?v=20261105j"></script>
+<script src="js/catalog.js?v=20261105j"></script>
 </body>
 </html>
