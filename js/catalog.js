@@ -254,59 +254,6 @@
     ids.forEach(function (id) { io.observe(document.getElementById(id)); });
   }
 
-  // Carrusel del hero: las fotos de los accesorios hacen de imagen de fondo (si no hay ninguna con imagen, queda el fondo estático)
-  function initHero() {
-    var box = $('heroCarousel'), hero = $('inicio');
-    if (!box || !hero) return;
-    var withImg = state.products.filter(function (p) { return p.type === 'estuche' && p.image_url; });
-    var inStock = withImg.filter(function (p) { return p.stock > 0; });
-    var list = (inStock.length ? inStock : withImg).slice(0, 8);
-    if (!list.length) return;
-
-    box.innerHTML =
-      list.map(function (p, i) {
-        var u = KT.esc(p.image_url);
-        return '<div class="hc-slide" role="img" aria-label="' + KT.esc(p.name) + '">' +
-          '<img class="hc-bg" src="' + u + '" alt="" aria-hidden="true"' + (i === 0 ? '' : ' loading="lazy"') + ' decoding="async" draggable="false">' +
-          '<img class="hc-fg" src="' + u + '" alt=""' + (i === 0 ? '' : ' loading="lazy"') + ' decoding="async" draggable="false"></div>';
-      }).join('') +
-      (list.length > 1 ? '<div class="hc-dots">' + list.map(function (p, i) {
-        return '<button type="button" class="hc-dot" data-i="' + i + '" aria-label="Foto ' + (i + 1) + '"></button>';
-      }).join('') + '</div>' : '');
-    hero.classList.add('has-carousel');
-
-    var slides = box.querySelectorAll('.hc-slide'), dots = box.querySelectorAll('.hc-dot');
-    var idx = 0, timer = null, down = null;
-    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    function show(i) {
-      idx = (i + slides.length) % slides.length;
-      Array.prototype.forEach.call(slides, function (s, k) { s.classList.toggle('on', k === idx); });
-      Array.prototype.forEach.call(dots, function (d, k) { d.classList.toggle('on', k === idx); });
-    }
-    function stop() { clearInterval(timer); timer = null; }
-    function play() {
-      stop();
-      if (slides.length > 1 && !reduce && !document.hidden) timer = setInterval(function () { show(idx + 1); }, 5000);
-    }
-
-    box.addEventListener('click', function (e) {
-      var d = e.target.closest('.hc-dot');
-      if (d) { show(+d.dataset.i); play(); }
-    });
-    // Deslizar con el dedo (móvil)
-    box.addEventListener('pointerdown', function (e) { down = e.clientX; });
-    box.addEventListener('pointerup', function (e) {
-      if (down === null) return;
-      var dx = e.clientX - down; down = null;
-      if (Math.abs(dx) > 40) { show(idx + (dx < 0 ? 1 : -1)); play(); }
-    });
-    box.addEventListener('pointercancel', function () { down = null; });
-    document.addEventListener('visibilitychange', function () { document.hidden ? stop() : play(); });
-
-    show(0); play();
-  }
-
   async function init() {
     $('year').textContent = new Date().getFullYear();
     bind();
@@ -321,7 +268,6 @@
     }
     applySettings();
     TYPES.forEach(function (t) { renderChips(t); renderGrid(t); });
-    if (SHOW_CASES) initHero();
     if (SHOW_CASES) {
       KT.cart.init({ wa: wa, products: state.products.filter(function (p) { return p.type === 'estuche'; }) });
     }
