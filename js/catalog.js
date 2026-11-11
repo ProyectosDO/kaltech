@@ -1,6 +1,7 @@
 /* Lógica del catálogo público */
 (function () {
   var state = {
+    all: false,
     cats: [], products: [], settings: {},
     filter: { celular: 'all', estuche: 'all' },
     search: { celular: '', estuche: '' }
@@ -42,23 +43,23 @@
   function tagFor(p) {
     var s = Number(p.stock || 0);
     return s > 0
-      ? '<span class="tag stock">' + KT.icon('check-circle') + 'En stock</span>'
+      ? ''
       : '<span class="tag out">Agotado</span>';
   }
 
   // Accesorios: tarjeta con imagen
   function cardHTML(p) {
+    var ok = Number(p.stock || 0) > 0;
     var img = p.image_url
       ? '<img loading="lazy" decoding="async" src="' + KT.esc(p.image_url) + '" alt="' + KT.esc(p.name) + '">'
       : placeholder();
     return '<article class="card" data-id="' + KT.esc(p.id) + '" tabindex="0" role="button" aria-label="Ver ' + KT.esc(p.name) + '">' +
-      '<div class="card-img">' + img + tagFor(p) + '</div>' +
+      '<div class="card-img">' + img + (ok ? '' : '<span class="tag out">Agotado</span>') + '</div>' +
       '<div class="card-body">' +
-        '<span class="card-brand">' + KT.esc(p.brand || catName(p.category_id)) + '</span>' +
         '<h3 class="card-title">' + KT.esc(p.name) + '</h3>' +
         '<div class="card-foot"><div class="card-price">' + KT.money(p.price) + '</div>' +
           '<button class="add-btn" data-add="' + KT.esc(p.id) + '" aria-label="Agregar ' + KT.esc(p.name) + ' al carrito"' +
-          (Number(p.stock || 0) > 0 ? '' : ' disabled') + '>' + KT.icon('cart') + '</button></div>' +
+          (ok ? '' : ' disabled') + '>' + KT.icon('cart') + (ok ? 'Agregar' : 'Agotado') + '</button></div>' +
       '</div></article>';
   }
 
@@ -109,9 +110,9 @@
 
     // Categorías: botones pequeños (chips)
     box.hidden = !cats.length;
-    var h = '<button class="chip' + (cur === 'all' ? ' active' : '') + '" data-cat="all">Todos</button>';
+    var h = '<button class="chip' + (cur === 'all' ? ' active' : '') + '" data-cat="all">' + KT.icon('grid') + 'Todos</button>';
     cats.forEach(function (c) {
-      h += '<button class="chip' + (cur === c.id ? ' active' : '') + '" data-cat="' + KT.esc(c.id) + '">' + KT.esc(c.name) + '</button>';
+      h += '<button class="chip' + (cur === c.id ? ' active' : '') + '" data-cat="' + KT.esc(c.id) + '">' + KT.icon(catIcon(c.name)) + KT.esc(c.name) + '</button>';
     });
     box.innerHTML = h;
   }
@@ -125,8 +126,12 @@
       return true;
     });
     var render = type === 'celular' ? phoneRowHTML : cardHTML;
+    // Destacados: muestra 8 y "Ver todos" despliega el resto (si hay filtro o búsqueda, muestra todo)
+    var lim = type === 'estuche' && !state.all && state.filter[type] === 'all' && !q ? 8 : 0;
+    var shown = lim ? list.slice(0, lim) : list;
+    if (type === 'estuche' && $('seeAll')) $('seeAll').hidden = !(lim && list.length > lim);
     els[type].grid.innerHTML = list.length
-      ? list.map(render).join('')
+      ? shown.map(render).join('')
       : '<p class="empty">' + (type === 'celular'
           ? 'Aún no hay celulares en la lista. Escríbenos y te conseguimos el modelo que buscas.'
           : 'No hay accesorios para mostrar por ahora.') + '</p>';
@@ -254,9 +259,30 @@
     ids.forEach(function (id) { io.observe(document.getElementById(id)); });
   }
 
+  // Inicio: ver todos, promos y desplazamiento al elegir categoría
+  function bindHome() {
+    var go = function () { var s = $('accesorios'); if (s) s.scrollIntoView({ behavior: 'smooth' }); };
+    var all = $('seeAll');
+    if (all) all.addEventListener('click', function () { state.all = true; renderGrid('estuche'); });
+    var chips = $('chipsCases');
+    if (chips) chips.addEventListener('click', function (e) { if (e.target.closest('.chip')) go(); });
+    var q = $('searchCases');
+    if (q) q.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
+    document.querySelectorAll('[data-promo]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        var k = a.dataset.promo;
+        var c = state.cats.find(function (x) { return x.type === 'estuche' && KT.slug(x.name).indexOf(k) === 0 && count('estuche', x.id) > 0; });
+        state.filter.estuche = c ? c.id : 'all';
+        renderChips('estuche'); renderGrid('estuche'); go();
+      });
+    });
+  }
+
   async function init() {
     $('year').textContent = new Date().getFullYear();
     bind();
+    bindHome();
     spy();
     applySettings(); // los botones de WhatsApp funcionan desde el primer momento
     try {
